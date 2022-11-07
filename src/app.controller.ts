@@ -16,8 +16,8 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get('getAll')
-  getHello(@Res() res: Response) {
-    res.status(HttpStatus.OK).json(this.appService.getHello());
+  async getHello(@Res() res: Response) {
+    res.status(HttpStatus.OK).json(await this.appService.getHello());
   }
 
   @Post('addCustomer')
