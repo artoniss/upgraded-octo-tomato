@@ -1,24 +1,25 @@
 import { Connection, QueryResult } from 'postgresql-client';
+import { Customer } from 'src/dto/customer.dto';
 
 export class Db {
   private connection: Connection;
-  async init() {
-    console.log(1);
+  constructor() {
     this.connection = new Connection(
       'postgres://postgres:postgrespw@localhost:49153',
     );
-
+  }
+  async init() {
+    // todo: вынести коннекшн
+    console.log(1);
     await this.connection.connect();
   }
 
   async createTableCustomers() {
-    console.log(2);
-
     const result: QueryResult = await this.connection
       .query(
         `CREATE TABLE customers (
             name varchar(80),
-            phone_number varchar(80)
+            phone_number varchar(80) PRIMARY KEY
         );`,
       )
       .catch((err) => {
@@ -28,11 +29,11 @@ export class Db {
     return result;
   }
 
-  async insertCustomer(name: string, phoneNumber: string) {
+  async insertCustomer(customer: Customer) {
     const result: QueryResult = await this.connection.query(
       `INSERT INTO customers (name, phone_number) VALUES (
-              ${name},
-              ${phoneNumber}
+              '${customer.name}',
+              '${customer.phoneNumber}'
           );`,
     );
     return result;
@@ -47,7 +48,7 @@ export class Db {
 
   async selectCustomer(phoneNumber: string) {
     const result: QueryResult = await this.connection.query(
-      `SELECT name FROM customers WHERE phone_number = ${phoneNumber};`,
+      `SELECT name FROM customers WHERE phone_number = '${phoneNumber}';`,
     );
     return result;
   }

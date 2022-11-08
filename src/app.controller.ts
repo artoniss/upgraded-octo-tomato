@@ -16,14 +16,20 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get('getAll')
-  async getHello(@Res() res: Response) {
-    res.status(HttpStatus.OK).json(await this.appService.getHello());
+  async getAllCustomers(@Res() res: Response) {
+    res.status(HttpStatus.OK).json(await this.appService.getAllCustomers());
   }
 
   @Post('addCustomer')
   @Header('Content-Type', 'application/json')
-  addCustomer(@Body() body: Customer, @Res() res: Response): void {
-    this.appService.addCustomer(body);
-    res.status(HttpStatus.OK).json(body);
+  async addCustomer(
+    @Body() body: Customer,
+    @Res() res: Response,
+  ): Promise<void> {
+    const result = await this.appService.addCustomer(body).catch((err) => {
+      console.log(err);
+      res.status(HttpStatus.SERVICE_UNAVAILABLE).json(err);
+    });
+    res.status(HttpStatus.OK).json({ response: result });
   }
 }
