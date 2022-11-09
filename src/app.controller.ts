@@ -7,17 +7,25 @@ import {
   HttpStatus,
   Res,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { AppService } from './app.service';
 import { Customer } from './dto/customer.dto';
 
 @Controller('customers')
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private configService: ConfigService,
+  ) {}
 
   @Get('getAll')
   async getAllCustomers(@Res() res: Response) {
-    res.status(HttpStatus.OK).json(await this.appService.getAllCustomers());
+    const result = await this.appService.getAllCustomers().catch((err) => {
+      console.error(err);
+      res.status(HttpStatus.SERVICE_UNAVAILABLE).json(err);
+    });
+    res.status(HttpStatus.OK).json({ response: result });
   }
 
   @Post('addCustomer')

@@ -1,17 +1,17 @@
 import { Connection, QueryResult } from 'postgresql-client';
-import { Customer } from 'src/dto/customer.dto';
+import { Customer } from '../dto/customer.dto';
 
 export class Db {
   private connection: Connection;
   constructor() {
-    this.connection = new Connection(
-      'postgres://postgres:postgrespw@localhost:49153',
-    );
+    this.connection = new Connection(process.env.DB_URL);
   }
   async init() {
     // todo: вынести коннекшн
     console.log(1);
-    await this.connection.connect();
+    await this.connection.connect().catch((err) => {
+      console.error(err);
+    });
   }
 
   async createTableCustomers() {

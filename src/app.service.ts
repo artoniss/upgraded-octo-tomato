@@ -6,6 +6,7 @@ import { Customer } from './dto/customer.dto';
 @Injectable()
 export class AppService {
   private db = new Db();
+
   async getAllCustomers(): Promise<Customer[]> {
     await this.db.init();
     const query = await this.db.selectAllCustomers();
